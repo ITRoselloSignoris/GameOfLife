@@ -8,7 +8,7 @@ DYING_CELLS = (169,169,169)
 COLOR_BG = (0,0,0)
 COLOR_GRID = (50,50,50)
 
-def Update(screen, cell, size, progress = False):
+def ConwayGoL(screen, cell, size, progress = False):
     updated_cells = np.zeros((cell.shape[0],cell.shape[1]))
 
     for row,col in np.ndindex(cell.shape):
@@ -27,21 +27,53 @@ def Update(screen, cell, size, progress = False):
             if alive == 3:
                 updated_cells[row,col] = 1
                 if progress:
-                    color = DYING_CELLS
+                    color = CELLS_ALIVE
 
         pygame.draw.rect(screen, color, (col * size, row * size, size - 1, size - 1))
     
     return  updated_cells
 
+def DayAndNight(screen, cell, size, progress = False):
+    updated_cells = np.zeros((cell.shape[0],cell.shape[1]))
 
+    for row,col in np.ndindex(cell.shape):
+        alive = np.sum(cell[row-1:row+2,col-1:col+2]) - cell[row,col]
+        color = COLOR_BG if cell[row,col] == 0 else CELLS_ALIVE
+
+        if cell[row,col] == 1:
+            if alive < 3 or (alive == 4 or alive == 5):
+                if progress:
+                    color = DYING_CELLS
+            elif alive >= 6 or alive == 3:
+                updated_cells[row,col] = 1
+                if progress:
+                    color = CELLS_ALIVE
+        else:
+            if alive >= 3 and alive != 5:
+                updated_cells[row,col] = 1
+                if progress:
+                    color = CELLS_ALIVE
+
+        pygame.draw.rect(screen, color, (col * size, row * size, size - 1, size - 1))
+    
+    return  updated_cells
+
+def Choice(Decision, screen, cell, size, progress = False):
+    if Decision == "DayAndNight":
+        return DayAndNight(screen, cell, size, progress)
+    elif Decision == "ConwayGoL":
+        return ConwayGoL(screen, cell, size, progress)
 
 def main():
+    print("Welcome, pick a one Cellular Automaton between these four to simulate. Write your desicion as indicates the parentheses of each.")
+    Desicion = input("Conway`s Game Of Life (\"ConwayGoL\"), Day And Night (\"DayAndNight\")")
+
     pygame.init()
     screen = pygame.display.set_mode((800,600))
-
+    
     cell = np.zeros((60,80))
     screen.fill(COLOR_GRID)
-    Update(screen, cell, 10)
+    Choice(Desicion, screen, cell, 10)
 
     pygame.display.flip()
     pygame.display.update()
@@ -57,7 +89,7 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     running = not running
-                    Update(screen, cell, 10)
+                    Choice(Desicion, screen, cell, 10)
                     pygame.display.update()
 
                 if event.key == pygame.K_RETURN:
@@ -65,7 +97,7 @@ def main():
                     while True:
                         pos = ((random.randint(0,799)),(random.randint(0,599)))
                         cell[pos[1]//10,pos[0]//10] = 1
-                        Update(screen, cell, 10)
+                        Choice(Desicion, screen, cell, 10)
                         pygame.display.update()
                         n += 1
                         if n == 1200:
@@ -76,13 +108,13 @@ def main():
             if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
                 cell[pos[1]//10,pos[0]//10] = 1
-                Update(screen, cell, 10)
+                Choice(Desicion, screen, cell, 10)
                 pygame.display.update()
 
         screen.fill(COLOR_GRID)
 
         if running:
-            cell = Update(screen,cell,10, progress = True)
+            cell = Choice(Desicion, screen, cell, 10, progress = True)
             pygame.display.update()
         time.sleep(0.001)
 

@@ -11,6 +11,7 @@ import random
 import time 
 from os import system, listdir
 
+PATRONES = listdir("WithTerminal\PatronesPreestablecidos")
 #Creacion de la matriz y asignacion de valores
 def BoardState(width,height):
     ls = []
@@ -89,7 +90,7 @@ def main(CurrentState):
         state = DeadState(w,h)
         CurrentState = NextState(CurrentState,state)
         Render(CurrentState)
-       
+         
 if __name__ == "__main__":
     print("Bienvenido, quieres simular El Juego de La Vida de Conway con valores al azar, o prefieres utilizar patrones preestablecidos.")
     while True:
@@ -101,9 +102,17 @@ if __name__ == "__main__":
             break
 
         elif Decision.upper() == "PP":
-            for i in listdir("WithTerminal\PatronesPreestablecidos"):
+            for i in PATRONES:
                 print(str(i).replace(".txt",""))
-            ChoosePP = input("Introduce el nombre del patron preestablecido que quieras simular de los que se encuentran anteriormente: ")
+            while True:
+                ChoosePP = input("Introduce el nombre del patron preestablecido que quieras simular de los que se encuentran anteriormente: ")
+                try:
+                    PATRONES.index(f"{ChoosePP.capitalize()}" + ".txt")
+                except ValueError:
+                    print("Ese nombre no coincide con ninguno de los patrones preestablecidos. Vuelve a intentarlo")
+                else:
+                    break
+                
             CurrentState = FileReading(ChoosePP.capitalize())
             w = len(CurrentState[0])
             h = len(CurrentState)

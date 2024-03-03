@@ -1,10 +1,9 @@
 """ 
-
-COMENTARIOS EXPLICANDO EN QUE SE DIFERENCIA CON EL OTRO PROGRAMA, Y QUE SE PUEDE HACER CON ESTE
-
-
-
-
+THE GAME OF LIFE SIMULATION ON THE TERMINAL
+-------------------------------------------
+This program displays a Game Of Life simulation on the terminal.
+The user can choose between, a board state where he chooses the amount of rows and columns, and each cell has a randomized int value between 0 and 1, or
+a board state loaded with a pre established pattern from a .txt file.
 """
 
 import random
@@ -12,8 +11,19 @@ import time
 from os import system, listdir
 
 PATRONES = listdir("WithTerminal\PatronesPreestablecidos")
-#Creacion de la matriz y asignacion de valores
+
 def BoardState(width,height):
+    """ Construct a matrix with random state in each cell.
+    
+    Parameters
+    ----------
+    width: The amount of columns of the matrix
+    height: The amount of rows of the matrix
+
+    Returns
+    -------
+    A matrix of dimensions width x height where each cell has a randomized integer value between 1 or 0, both being included, eith equal probability.
+    """
     ls = []
     for j in range(0,height):
         ls1 = []
@@ -23,9 +33,30 @@ def BoardState(width,height):
     return ls
 
 def DeadState(width,height):
+    """ It creates a matrix with dead states in each cell.
+    
+    Parameters
+    ----------
+    width: The amount of columns of the matrix 
+    height: The amount of rows of the matrix
+    
+    Returns
+    -------
+    A matrix of dimensions width x height where each cell has a dead state (0).
+    """
     return [[0 for i in range(width)]for j in range(height)]
 
 def FileReading(Choice):
+    """ Loads a Board State from the given filepath. 
+    
+    Parameters
+    ----------
+    Choice: The file name of the pre established pattern
+    
+    Returns
+    -------
+    A board state loaded from the given filepath.
+    """
     with open(f"WithTerminal\PatronesPreestablecidos\{Choice}.txt", "r") as File:
         lines = [l.rstrip() for l in File.readlines()]
 
@@ -40,6 +71,16 @@ def FileReading(Choice):
     return board
 
 def Render(Matriz):
+    """ It displays the Board State given by printing it to the terminal.
+    
+    Parameters
+    ----------
+    Matriz: A Board state
+    
+    Returns
+    -------
+    It returns nothing - It is a display function.
+    """
     s = "-" * ((len(Matriz[0])) + 2)
     print(s)
     for i in Matriz:
@@ -53,6 +94,17 @@ def Render(Matriz):
     print(s)
 
 def NextState(InitialState,NewState):
+    """ If needed, it changes each cell value from the NewState board, following the rules and logic established by the Game Of Life.
+    
+    Parameters
+    ----------
+    InitialState: The Current Board state
+    NewState: The New Board state
+    
+    Returns
+    -------
+    The new state of the board.
+    """
     for y in range(0,len(InitialState)):
         for x in range(0,len(InitialState[y])):
             ContadorVivos = 0
@@ -82,6 +134,16 @@ def NextState(InitialState,NewState):
     return NewState
 
 def main(CurrentState):
+    """ It runs the Game of Life forever, starting from the initial state. 
+    
+    Parameters
+    ----------
+    CurrentState: The Current Board state
+    
+    Returns
+    -------
+    It returns nothing -- To stop it, it needs to be forcibly exited.
+    """
     Render(CurrentState)
 
     while True:
@@ -92,20 +154,23 @@ def main(CurrentState):
         Render(CurrentState)
          
 if __name__ == "__main__":
+    """It asks the user to choose between a randomly board state, or a board state with a pre established pattern.
+    """
+
     print("Bienvenido, quieres simular El Juego de La Vida de Conway con valores al azar, o prefieres utilizar patrones preestablecidos.")
     while True:
         Decision = input("Escribe \"CONWAY\" si deseas simular la 1era opcion, o sino escribe \"PP\" para simular la 2da: ")
         if Decision.upper() == "CONWAY":
             h = int(input("Ingresa cuantas filas quiere que tenga: "))
             w = int(input("Ingresa cuantas columnas quiere que tenga: "))
-            CurrentState = BoardState(w,h)
+            Initial_State = BoardState(w,h)
             break
 
         elif Decision.upper() == "PP":
             for i in PATRONES:
                 print(str(i).replace(".txt",""))
             while True:
-                ChoosePP = input("Introduce el nombre del patron preestablecido que quieras simular de los que se encuentran anteriormente: ")
+                ChoosePP = input("Introduce el nombre del patron preestablecido que quieras simular de los que se encuentran arriba: ")
                 try:
                     PATRONES.index(f"{ChoosePP.capitalize()}" + ".txt")
                 except ValueError:
@@ -113,13 +178,13 @@ if __name__ == "__main__":
                 else:
                     break
                 
-            CurrentState = FileReading(ChoosePP.capitalize())
-            w = len(CurrentState[0])
-            h = len(CurrentState)
+            Initial_State = FileReading(ChoosePP.capitalize())
+            w = len(Initial_State[0])
+            h = len(Initial_State)
             break
         else:
             print("Vuelve a intentarlo. Escribe tal cual esta escrita una de las 2 opciones que ofrecemos")
 
-    main(CurrentState)
+    main(Initial_State)
     
     

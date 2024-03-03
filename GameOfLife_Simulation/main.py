@@ -10,7 +10,7 @@ import random
 import time 
 from os import system, listdir
 
-PATRONES = listdir("WithTerminal\PatronesPreestablecidos")
+PATRONES = listdir("GameOfLife_Simulation\PatronesPreestablecidos")
 
 def BoardState(width,height):
     """ Construct a matrix with random state in each cell.
@@ -57,7 +57,7 @@ def FileReading(Choice):
     -------
     A board state loaded from the given filepath.
     """
-    with open(f"WithTerminal\PatronesPreestablecidos\{Choice}.txt", "r") as File:
+    with open(f"GameOfLife_Simulation\PatronesPreestablecidos\{Choice}.txt", "r") as File:
         lines = [l.rstrip() for l in File.readlines()]
 
     height = len(lines)

@@ -5,7 +5,6 @@ This program displays a Game Of Life simulation on the terminal.
 The user can choose between, a board state where he chooses the amount of rows and columns, and each cell has a randomized int value between 0 and 1, or
 a board state loaded with a pre established pattern from a .txt file.
 """
-
 import random
 import time 
 from os import system, listdir
